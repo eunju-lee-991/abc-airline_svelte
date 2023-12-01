@@ -1,7 +1,7 @@
 <script>
     import axios from "axios";
-    import { onMount } from "svelte";
     import Airport from "../components/reservation/airport.svelte";
+    import Flight from "../components/reservation/flight.svelte";
     import Flatpickr from "svelte-flatpickr";
     import "flatpickr/dist/flatpickr.css";
 
@@ -9,6 +9,7 @@
     let showArrivals = false;
     let departureInfos = [];
     let arrivalInfos = [];
+    let flightInfo = [];
     let selecteDeparture = "";
     let selecteArrival = "";
     let selectedDate;
@@ -68,12 +69,13 @@
                 },
             })
             .then((response) => {
-                console.log(response);
+                console.log(response.data.count);
+                console.log(response.data.data);
+                flightInfo = response.data.data
             })
             .catch((error) => {
                 console.log(error.response);
             });
-        selectedDate;
     };
 
     const options = {
@@ -123,10 +125,14 @@
         </div>
 
         <div class="date-select">
-            <Flatpickr bind:value={selectedDate} {options} />
+            <span>날짜 : </span>
+            <span><Flatpickr bind:value={selectedDate} {options} /></span>
         </div>
     </div>
     <button type="button" class="search" on:click={findFlights}> 검색 </button>
+    {#if flightInfo}
+        <Flight flightInfo={flightInfo} />
+    {/if}
 </main>
 
 <style>
@@ -156,13 +162,14 @@
         color: rgb(247, 243, 243); /* 텍스트 색상 */
         font-size: 20px;
         padding: 5px; /* 내부 여백 */
-        margin: 100px 0; /* 위아래 마진 (간격) */
+        margin: 70px 0; /* 위아래 마진 (간격) */
         border: none; /* 자연스러운 회색 테두리 설정 */
         text-align: center; /* 텍스트 정렬 */
         text-decoration: none; /* 밑줄 제거 */
         display: inline-block;
         cursor: pointer; /* 마우스 커서 포인터로 변경 */
-        width: 120px;
+        width: 80px;
+        height: 50px;
         box-sizing: border-box; /* 여백과 테두리를 포함한 전체 박스 크기로 설정 */
     }
 </style>
